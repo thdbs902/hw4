@@ -1,0 +1,36 @@
+# CC Storefront Design (Problem 10)
+
+All changes are in `frontend/src/index.css` (a "Problem 10 design layer" at the end), plus `components/DDAvatar.tsx` (new), `pages/Home.tsx`, `pages/Products.tsx`, `components/ChatWidget.tsx` and `index.html`. All existing features still work: browsing, detail pages, accounts, chat, DD's picks and chat memory were re-tested with no console errors.
+
+| Area | What I changed | Why it should help customers stick around and buy |
+|---|---|---|
+| **Fonts** | Kept the Playfair Display serif for headlines and added **Oswald**, a collegiate block font, for labels, prices, buttons, sizes and the ticker. Buttons are uppercase with wide letter-spacing. | Serif plus varsity block reads as "Yale shop", not a generic template. Prices and buttons stand out, so the next step is obvious. |
+| **Colours** | Yale navy plus an animated **gold-foil gradient** on the hero tagline, detail-page prices and brand; a "Bulldog blue" for shopper chat bubbles; a warm ivory "paper" page background; frosted-glass navy nav. | Gold on navy feels premium and on-brand, and the foil draws the eye to price and tagline. The warm background makes the white product photos pop. |
+| **Visual hierarchy** | Home hero is now a **split layout**: message and CTAs on the left, three **floating product cards with gold price tags** on the right. A navy/gold **category ticker** (Hoodies · Crewnecks · Quarter-zips · T-shirts · Jackets · College · Dad · Mom · Football · Baseball) sits under the hero, and each item opens a filtered Products page. | Shoppers see real merch and prices in the first second, and the ticker gives one-tap entry points instead of a long scroll. |
+| **Motion** | Product cards rise in with a staggered fade; hero cards float gently; gold foil shimmers; the ticker scrolls and pauses on hover; chat bubbles pop in; DD's eyes blink and he wiggles on the launcher. Everything is switched off for shoppers with **"reduce motion"** set in their OS. | Subtle motion makes the store feel alive and guides attention without getting in the way. Reduced-motion support keeps it comfortable for everyone. |
+| **Product presentation** | Cards get a soft **spotlight** behind the garment, a **navy price tag with gold text**, a gold outline and slight tilt on hover, and an uppercase "VIEW DETAILS →". Detail pages get the same spotlight stage and a large foil price; the selected size gets a lifted shadow. | Products look like they're on display in a boutique, the price is always easy to find, and the hover feedback invites clicking through to the detail page. |
+| **Chat feel** | **DD the bulldog mascot** built in pure HTML/CSS (ears, blinking eyes, muzzle, navy "Y" collar) on the launcher and chat header; a "● CC's bulldog stylist · real prices & stock" status line; glassy navy header; gradient shopper bubbles; animated **gold typing dots**; gold-foil Send button. | A friendly mascot and a "real prices & stock" promise make the chat feel like a trustworthy shop assistant, so people ask more questions. Each answer can show product cards, so more questions lead to more product views and purchases. |
+| **Ease of use** | Products search now matches **word by word and ignores plurals** ("Hoodies" → 27 hoodies), so ticker links and typed searches find items. The layout falls back to one column on phones. | Fewer "no results" dead ends, and the store works on the phones students actually shop on. |
+
+**Checks after styling:** ticker "Hoodies" → 27 of 102 items (matches the DB); card → detail page ($68.00, colour swatch selection works); chat on the Basic Hoodie page, "is this in XL?" → "Yes… 2 left… $68" with typing dots shown; no console errors.
+
+## Follow-up: Apple × NFL Halftime Show theme
+
+| Area | What I changed | Why it helps customers stick around and buy |
+|---|---|---|
+| **Theme** | Apple-style light-gray (#f5f5f7) storefront with SF-style type (`-apple-system`, tight tracking), plus a **night-stadium hero**: three sweeping spotlight beams, a twinkling crowd strip, and a gold glow from the field. | The clean Apple layout makes products easy to scan; the halftime-show stage makes the first screen exciting and memorable. |
+| **Scoreboard** | LED-style **YALE 21 – HALFTIME 15:00 – 17 HARVARD** board with a blinking clock above the headline; top strip reads "The Halftime Collection". | Ties CC merch to the biggest game-day moment, which creates urgency and fan pride. |
+| **Turf ticker** | Category ticker restyled as a **football field** (green turf stripes + white yard lines). | Playful, on-theme shortcuts into Hoodies, Crewnecks, College, Dad, Mom, Football… |
+| **Click sound** | A short stadium-clicker **"tick-pop"** on every button, link, size and swatch, generated in the browser (Web Audio API, no audio files). A 🔊/🔇 toggle in the nav saves the choice. | Tactile, game-show feedback makes browsing feel responsive; shoppers who prefer quiet can mute it in one tap. |
+| **Apple product tiles** | 22px rounded white tiles, soft shadows, gentle scale on hover, black price pill, blue "View details →". | Premium, uncluttered product presentation, like an Apple Store shelf. |
+| **iMessage-style chat** | Black glass header with the DD bulldog, gray assistant bubbles, blue shopper bubbles, black/gold launcher. | Feels like texting a friend, so people ask DD more questions and see more products. |
+| **Yale crest bar** | Under the nav on every page: CSS-drawn shields for the **11 residential colleges** and **11 professional schools** that CC carries; each opens that college's or school's products. | Puts the Yale brand front and centre and gives students and alumni a one-tap path to their own college gear. |
+| **Neat product photos** | All 102 photos: black backgrounds and gaps under the arms removed, outlines smoothed, garment cropped and centred at the same scale. | Clean, consistent photos look trustworthy and "ready to buy"; mismatched or black-edged photos look cheap. |
+
+## Follow-up 2: real Yale crests, crowd sound, Handsome Dan
+
+| What I changed | Why it helps |
+|---|---|
+| **Real Yale crests**: the official Yale University shield (Wikimedia Commons SVG, public domain in the US, trademark-protected) in the nav and crest bar, plus the **real college and school crests cropped from CC's own product photos** (`crop_crests.py`) for all 11 colleges and 10 schools, in the crest bar and a big "Rep your college. Rep your school." crest wall on the home page. Brand files stay in git-ignored `data/brand/`. | Shoppers instantly recognise their own college's arms; it reads as the real Yale store, and each crest is a one-tap path to that college's merch. |
+| **Stadium crowd ambience**: synthesized in the browser (no audio files): crowd-roar bed, random cheer swells, and a "stomp-stomp-CLAP" chant. Starts on the first click (browsers block autoplay) and follows the 🔊/🔇 toggle. | Game-day energy that matches the halftime theme and keeps people on the page; one tap mutes it. |
+| **Handsome Dan**: a cute illustrated bulldog in a navy Yale sweater, built in pure HTML/CSS, running back and forth across the hero with a bouncing football (legs, tail wag, blinking eyes, panting tongue, dust puffs). Parks still for "reduce motion" users. | A friendly mascot makes the brand memorable and fun to share. |

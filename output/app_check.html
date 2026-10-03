@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Campus Customs — App Check (Problem 11)</title>
+<style>
+  :root { --navy: #00356b; --gold: #d4af37; --ink: #1d1d1f; --gray: #6e6e73; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Helvetica Neue", sans-serif; color: var(--ink); background: #f5f5f7; line-height: 1.55; }
+  header { background: #050608; color: #fff; padding: 2.5rem 1.5rem 2rem; border-bottom: 3px solid var(--gold); }
+  header .wrap, main { max-width: 1100px; margin: 0 auto; }
+  header h1 { margin: 0 0 0.4rem; font-size: 2.2rem; letter-spacing: -0.03em; }
+  header p { margin: 0.2rem 0; color: #d2d2d7; }
+  .pill { display: inline-block; background: var(--gold); color: #000; font-weight: 700; border-radius: 999px; padding: 0.15rem 0.7rem; font-size: 0.8rem; margin-right: 0.4rem; }
+  nav.toc { background: #fff; border-radius: 16px; padding: 1rem 1.4rem; margin: 1.6rem 0; box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+  nav.toc ol { margin: 0.4rem 0 0; padding-left: 1.2rem; }
+  nav.toc a { color: #0066cc; text-decoration: none; }
+  section { background: #fff; border-radius: 22px; padding: 1.6rem; margin: 1.6rem 0; box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+  section h2 { margin: 0 0 0.3rem; font-size: 1.5rem; letter-spacing: -0.02em; }
+  .req { color: var(--gray); margin: 0 0 1rem; font-size: 0.95rem; }
+  figure { margin: 0; }
+  figure img { width: 100%; border-radius: 14px; border: 1px solid #e5e5ea; display: block; }
+  figcaption { margin-top: 0.8rem; font-size: 1rem; }
+  table { border-collapse: collapse; margin-top: 0.8rem; font-size: 0.92rem; }
+  th, td { border: 1px solid #e5e5ea; padding: 0.4rem 0.7rem; text-align: left; }
+  th { background: #f5f5f7; }
+  .pass { color: #1e7a3c; font-weight: 700; }
+  code { background: #f2f2f5; padding: 0.05rem 0.35rem; border-radius: 5px; font-size: 0.88em; }
+  footer { color: var(--gray); font-size: 0.85rem; text-align: center; padding: 2rem 1rem 3rem; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Campus Customs — App Check</h1>
+    <p><span class="pill">Problem 11</span>Live-site testing of the CC storefront and its DD chat agent.</p>
+    <p>Screenshots were taken from the <b>actual running app</b> (React + Vite on <code>http://127.0.0.1:5174</code>, FastAPI + PydanticAI on <code>:8000</code>, model <code>gpt-5.6-luna</code> via Portkey) by driving Google Chrome with Playwright (<code>backend/app_check_screens.py</code>), browsing as a guest. Every number in the captions was checked against <code>campus_customs.db</code>.</p>
+  </div>
+</header>
+
+<main>
+  <nav class="toc">
+    <b>Checks</b>
+    <ol>
+      <li><a href="#inventory">Chat checks the inventory level of an item</a></li>
+      <li><a href="#search">Dynamic search-result cards after a category question</a></li>
+      <li><a href="#badges">Problem 9 usability feature: stock badges on product cards</a></li>
+      <li><a href="#askdd">Problem 9 usability feature: "Ask DD about this" button</a></li>
+      <li><a href="#alternatives">Problem 9 usability feature: sold-out size → find alternatives</a></li>
+      <li><a href="#home">Storefront overview (home page)</a></li>
+    </ol>
+  </nav>
+
+  <section id="inventory">
+    <h2>1. Chat checks the inventory level of an item</h2>
+    <p class="req">Required: chat checking the inventory level of an item, with honest stock and price from the database.</p>
+    <figure>
+      <img src="app_check_images/inventory.png" alt="DD chat answering that 2 of the 2025 Yale vs Harvard T-Shirt are left in size L at $32.00, with the product card shown on the page" />
+      <figcaption>The shopper asks <i>"How many 2025 Yale vs Harvard T-shirts do you have in size L, and how much are they?"</i>. DD answers <b>"We have 2 … left in size L, and it's $32.00"</b>, and the same product appears as a card with an <b>"Only 2 left in L"</b> badge. This proves the agent looked up the real inventory row (its <code>check_size_stock</code> tool) instead of guessing.</figcaption>
+    </figure>
+    <table>
+      <tr><th>Database check</th><th>SQLite value</th><th>Shown in app</th><th></th></tr>
+      <tr><td><code>inventory.quantity</code> for 2025-yale-vs-harvard-t-shirt, size L</td><td>2</td><td>"2 … left in size L"</td><td class="pass">✓ match</td></tr>
+      <tr><td><code>catalogue.price</code></td><td>32.0</td><td>"$32.00"</td><td class="pass">✓ match</td></tr>
+    </table>
+  </section>
+
+  <section id="search">
+    <h2>2. Dynamic search-result cards after a category question</h2>
+    <p class="req">Required: dynamic search-result cards appearing after a category question such as "what hoodies do you have?".</p>
+    <figure>
+      <img src="app_check_images/search_cards.png" alt="DD's picks panel titled Yale hoodies showing 12 of 27 matches as product cards, next to the chat reply" />
+      <figcaption>After <i>"what hoodies do you have?"</i>, DD's <code>search_products</code> tool returned structured matches, and a <b>"DD's picks · Showing 12 of 27 matches — Yale hoodies"</b> panel appeared on the page with product cards (image, name, price, short description; each opens its detail page). DD's reply gives the real total of 27 hoodies, and the prices match the catalogue ($68.00 / $45.00).</figcaption>
+    </figure>
+    <table>
+      <tr><th>Database check</th><th>SQLite value</th><th>Shown in app</th><th></th></tr>
+      <tr><td>Products whose <code>garment_type</code> is a hoodie</td><td>27</td><td>"Showing 12 of 27 matches", "27 hoodies"</td><td class="pass">✓ match</td></tr>
+    </table>
+  </section>
+
+  <section id="badges">
+    <h2>3. Problem 9 usability feature: stock badges on product cards</h2>
+    <p class="req">Front-end improvement chosen in Problem 9: availability shown on every card before clicking.</p>
+    <figure>
+      <img src="app_check_images/stock_badges.png" alt="Products page where each card has a badge such as Only 2 left in L, Sold out in XS, XL, or In stock all sizes" />
+      <figcaption>Every product card on the Products page now carries a badge computed from the real <code>inventory</code> rows: <b>"Only 2 left in L"</b>, <b>"Sold out in XS, XL"</b>, <b>"Only 2 left in XL"</b>, or <b>"In stock · all sizes"</b>. Shoppers see availability at a glance, and honest low-stock signals help sales.</figcaption>
+    </figure>
+    <table>
+      <tr><th>Card</th><th>SQLite inventory</th><th>Badge</th><th></th></tr>
+      <tr><td>Baseball Left Chest Crewneck</td><td>XS = 0, XL = 0</td><td>"Sold out in XS, XL"</td><td class="pass">✓ match</td></tr>
+      <tr><td>Basic Hoodie Big Yale</td><td>XL = 2</td><td>"Only 2 left in XL"</td><td class="pass">✓ match</td></tr>
+    </table>
+  </section>
+
+  <section id="askdd">
+    <h2>4. Problem 9 usability feature: "Ask DD about this" button</h2>
+    <p class="req">Front-end improvement chosen in Problem 9: one-tap questions about the product being viewed.</p>
+    <figure>
+      <img src="app_check_images/ask_dd.png" alt="Yale Mom Hoodie product page with size M selected and the Ask DD about this chips; the chat opened and answered that M is available with 8 in stock at $68.00" />
+      <figcaption>On the Yale Mom Hoodie page the shopper picked size M and tapped <b>"Is this in M?"</b> in the new <b>Ask DD about this</b> box. The chat opened by itself, sent the question with the page context, and DD replied <b>"available in M, with 8 in stock. It's $68.00"</b> (database: M = 8, $68).</figcaption>
+    </figure>
+  </section>
+
+  <section id="alternatives">
+    <h2>5. Problem 9 usability feature: sold-out size → find alternatives</h2>
+    <p class="req">Agent improvement chosen in Problem 9: turn a sold-out dead end into a sale.</p>
+    <figure>
+      <img src="app_check_images/alternatives.png" alt="Chat answer that the Baseball Left Chest Crewneck is sold out in XL with similar in-stock crewnecks shown as cards titled XL crewneck alternatives" />
+      <figcaption>On the Baseball Left Chest Crewneck page the shopper asks <i>"Is this in XL?"</i>. DD says clearly it is <b>sold out in XL</b> (database XL = 0), lists the sizes in stock, then calls the new <code>find_alternatives</code> tool and shows <b>"XL crewneck alternatives"</b>: similar $58.00 crewnecks that <i>are</i> in stock in XL.</figcaption>
+    </figure>
+    <p>The other agent improvement, <b>remember the shopper's size</b>, was tested through the API with a logged-in account: after <i>"I usually wear a medium and I love navy"</i>, DD saved <code>size = M, colors = ["navy"]</code> in <code>customer_preferences</code>. On the Yale Mom Hoodie page, <i>"is this in stock for me?"</i> was answered with <b>"your usual medium is in stock … 8 available, $68"</b>.</p>
+  </section>
+
+  <section id="home">
+    <h2>6. Storefront overview (home page)</h2>
+    <p class="req">Context: the styled CC storefront these checks ran on.</p>
+    <figure>
+      <img src="app_check_images/home.png" alt="Campus Customs home page with Yale college and school crest bar, halftime scoreboard, spotlight hero and floating product cards with price tags" />
+      <figcaption>Home page in the Apple × halftime-show design: Yale <b>college and school crest bar</b> (each crest opens that college's or school's products), LED scoreboard, stadium spotlights, floating product cards with real prices, and the DD bulldog chat button.</figcaption>
+    </figure>
+  </section>
+</main>
+
+<footer>Campus Customs · HW4 · Screenshots in <code>app_check_images/</code> are linked with relative paths, so this page opens by double-clicking.</footer>
+</body>
+</html>

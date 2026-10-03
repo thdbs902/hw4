@@ -1,0 +1,12 @@
+# Campus Customs backend (FastAPI + PydanticAI). Install into backend/.venv:
+#   cd backend && python3 -m venv .venv && .venv/bin/pip install -r ../requirements.txt
+fastapi
+uvicorn[standard]
+python-dotenv
+pydantic-ai-slim[openai]
+openai
+# product photo cleanup + crest crops (clean_images.py, crop_crests.py)
+pillow
+numpy
+# optional: re-take the app-check screenshots (app_check_screens.py, uses installed Google Chrome)
+playwright
