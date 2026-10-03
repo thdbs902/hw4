@@ -50,7 +50,7 @@ npm install
 npm run dev
 ```
 
-Open **http://127.0.0.1:5174**. Vite proxies `/api` and `/media` to the back end on `:8000`.
+Open **http://yalecc.localhost:5174** (or http://127.0.0.1:5174). Any `*.localhost` name points to your own computer in Chrome, so no setup is needed. Vite proxies `/api` and `/media` to the back end on `:8000`.
 
 ## Test login
 
